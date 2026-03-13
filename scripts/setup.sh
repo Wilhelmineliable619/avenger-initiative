@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-# AVENGER INITIATIVE — Setup Script
+# AVENGER INITIATIVE — Setup Script v3
 # Run once per OpenClaw instance
 # Usage: setup.sh --repo https://github.com/USER/vault-repo [--key YOUR_KEY]
 # ============================================================
@@ -14,6 +14,7 @@ PROVIDED_KEY=""
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
 log()    { echo -e "${GREEN}[AVENGER SETUP]${NC} $1"; }
+warn()   { echo -e "${YELLOW}[WARN]${NC} $1"; }
 fail()   { echo -e "${RED}[FAIL]${NC} $1"; exit 1; }
 
 while [[ $# -gt 0 ]]; do
@@ -32,8 +33,8 @@ echo "🛡️  AVENGER INITIATIVE — SETUP"
 echo "================================"
 
 # ---- Preflight checks -------------------------------------
-command -v git >/dev/null 2>&1 || fail "git not installed"
-command -v gh >/dev/null 2>&1 || fail "gh CLI not installed"
+command -v git    >/dev/null 2>&1 || fail "git not installed"
+command -v gh     >/dev/null 2>&1 || fail "gh CLI not installed"
 command -v openssl >/dev/null 2>&1 || fail "openssl not installed"
 gh auth status >/dev/null 2>&1 || fail "gh not authenticated — run: gh auth login"
 
@@ -75,7 +76,6 @@ else
         log "  ✓ Generated new key"
     fi
 fi
-
 chmod 600 "$KEY_FILE"
 
 # ---- Save config ------------------------------------------
@@ -89,6 +89,59 @@ cat > "$CONFIG_FILE" << JSON
 JSON
 chmod 600 "$CONFIG_FILE"
 log "  ✓ Config saved"
+
+# ---- Initialize vault repo with main branch ---------------
+log "Initializing vault repo..."
+GH_TOKEN=$(gh auth token)
+REPO_URL=$(echo "$VAULT_REPO" | sed "s|https://|https://${GH_TOKEN}@|")
+VAULT_DIR="/tmp/avenger-setup-$$"
+git clone --quiet "$REPO_URL" "$VAULT_DIR"
+cd "$VAULT_DIR"
+git config user.email "avenger@openclaw.ai"
+git config user.name "Avenger Initiative"
+
+# Check if main branch exists
+if git ls-remote --exit-code --heads origin main >/dev/null 2>&1; then
+    log "  ✓ main branch already exists"
+else
+    warn "  main branch not found — creating it now..."
+    # Switch to main (or create it)
+    git checkout -b main 2>/dev/null || git checkout main
+    cat > README.md << 'VAULTREADME'
+# 🛡️ Avenger Initiative Vault
+
+This is an encrypted backup vault managed by [Avenger Initiative](https://proskills.md/skills/avenger-initiative).
+
+## Branch Structure
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | ✅ Always contains the **latest backup** |
+| `backup/daily/YYYY-MM-DD` | Point-in-time daily snapshots (last 7 kept) |
+| `backup/weekly/YYYY-WNN` | Weekly snapshots (last 8 kept) |
+| `backup/monthly/YYYY-MM` | Monthly snapshots (last 12 kept) |
+
+## Restore
+
+```bash
+# Latest (default)
+bash restore.sh
+
+# From a specific date
+bash restore.sh --branch backup/daily/2026-03-10
+```
+
+## Security
+
+`openclaw.json` is AES-256-CBC encrypted. Encryption key is stored locally only — never in this repo.
+VAULTREADME
+    git add README.md
+    git commit -m "chore: initialize vault with main branch" --quiet
+    git push -u origin main --quiet
+    log "  ✓ main branch created and pushed"
+fi
+
+cd /; rm -rf "$VAULT_DIR"
 
 # ---- Make scripts executable ------------------------------
 SKILL_DIR="$OPENCLAW_DIR/workspace/skills/avenger-initiative/scripts"
