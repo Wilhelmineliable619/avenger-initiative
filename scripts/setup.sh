@@ -147,6 +147,39 @@ cd /; rm -rf "$VAULT_DIR"
 SKILL_DIR="$OPENCLAW_DIR/workspace/skills/avenger-initiative/scripts"
 chmod +x "$SKILL_DIR"/*.sh 2>/dev/null || true
 
+# ---- Schedule daily backup cron ---------------------------
+log "Setting up daily backup cron (02:00 UTC)..."
+CRON_FILE="$OPENCLAW_DIR/cron/jobs.json"
+
+if [ -f "$CRON_FILE" ]; then
+    # Check if avenger job already exists
+    if python3 -c "import json,sys; d=json.load(open('$CRON_FILE')); sys.exit(0 if any('avenger' in j.get('name','').lower() for j in d.get('jobs',[])) else 1)" 2>/dev/null; then
+        log "  ✓ Backup cron already exists"
+    else
+        python3 << PYEOF
+import json, uuid
+path = "$CRON_FILE"
+data = json.load(open(path))
+data["jobs"].append({
+    "id": str(uuid.uuid4()),
+    "name": "Avenger Initiative — Nightly Backup",
+    "enabled": True,
+    "schedule": {"kind": "cron", "expr": "0 2 * * *", "tz": "UTC"},
+    "sessionTarget": "main",
+    "wakeMode": "now",
+    "payload": {
+        "kind": "systemEvent",
+        "text": "🛡️ Avenger nightly backup: Run this exact command now and confirm when done: bash $SKILL_DIR/backup.sh"
+    }
+})
+open(path, "w").write(json.dumps(data, indent=2))
+print("  ✓ Daily backup cron added (02:00 UTC)")
+PYEOF
+    fi
+else
+    warn "  Cron file not found at $CRON_FILE — add backup cron manually via OpenClaw"
+fi
+
 # ---- Show key to save -------------------------------------
 KEY=$(cat "$KEY_FILE")
 echo ""
